@@ -9,11 +9,63 @@ graph = {
 from priority_queue import PriorityQueue
 from collections import defaultdict
 
+
+def print_frontier(frontier):
+    frontier_temp = []
+    while frontier.__len__() != 0:
+        frontier_temp.append(frontier.pop())
+    frontier_str = ''
+    for cost, state in frontier_temp:
+        frontier_str += state[-1] + '(' + str(cost) + ') '
+        frontier.append(state, cost)
+    print(frontier_str)
+
+
 # Return the path found
 def uniform_cost_search(graph, inital_node, goal_test, is_tree, is_update):
 
-    # frontier = PriorityQueue('min')
-    raise NotImplementedError
+    frontier = PriorityQueue('min')
+    frontier.append(inital_node, 0)
+    visited = set()
+    parents = defaultdict()
+    parents[(0, inital_node)] = None
+    curr = None
+    path = ''
+    while frontier.__len__() != 0:
+        print_frontier(frontier)
+        curr_cost, state = frontier.pop()
+        if goal_test(state):
+            curr = (curr_cost, state)
+            break
+        if not is_tree and state not in visited:
+            visited.add(state)
+
+        for next_state, cost in graph[state]:
+            next_cost = curr_cost + cost
+            if not is_tree and next_state in visited:
+                continue
+
+            if is_update and frontier.__contains__(next_state):
+                prev_cost = frontier.__getitem__(next_state)
+                if prev_cost > next_cost:
+                    frontier.__delitem__(next_state)
+                    del parents[(prev_cost, next_state)]
+                    parents[(next_cost, next_state)] = (curr_cost, state)
+                else:
+                    continue
+
+            if (next_cost, next_state) not in parents:
+                parents[(next_cost, next_state)] = (curr_cost, state)
+            frontier.append(next_state, next_cost)
+
+    if curr is not None:
+        while curr is not None:
+            path = curr[1] + path
+            curr = parents[curr]
+        return path
+    else:
+        return False
+
 
 print("=====")
 print("Tree")
