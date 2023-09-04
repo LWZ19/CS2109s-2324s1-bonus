@@ -12,7 +12,7 @@ from collections import defaultdict
 
 def print_frontier(frontier):
     frontier_temp = []
-    while frontier.__len__() != 0:
+    while len(frontier) != 0:
         frontier_temp.append(frontier.pop())
     frontier_str = ''
     for cost, state in frontier_temp:
@@ -31,7 +31,7 @@ def uniform_cost_search(graph, inital_node, goal_test, is_tree, is_update):
     parents[(0, inital_node)] = None
     curr = None
     path = ''
-    while frontier.__len__() != 0:
+    while len(frontier) != 0:
         print_frontier(frontier)
         curr_cost, state = frontier.pop()
         if goal_test(state):
@@ -45,10 +45,10 @@ def uniform_cost_search(graph, inital_node, goal_test, is_tree, is_update):
             if not is_tree and next_state in visited:
                 continue
 
-            if is_update and frontier.__contains__(next_state):
-                prev_cost = frontier.__getitem__(next_state)
+            if is_update and next_state in frontier:
+                prev_cost = frontier[next_state]
                 if prev_cost > next_cost:
-                    frontier.__delitem__(next_state)
+                    del frontier[next_state]
                     del parents[(prev_cost, next_state)]
                     parents[(next_cost, next_state)] = (curr_cost, state)
                 else:
