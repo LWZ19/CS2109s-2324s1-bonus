@@ -16,7 +16,7 @@ def print_frontier(frontier):
         frontier_temp.append(frontier.pop())
     frontier_str = ''
     for cost, state in frontier_temp:
-        frontier_str += state[-1] + '(' + str(cost) + ') '
+        frontier_str += state + '(' + str(cost) + ') '
         frontier.append(state, cost)
     print(frontier_str)
 

@@ -1,5 +1,4 @@
-from treelib import Tree
-import queue
+from T01.priority_queue import PriorityQueue
 
 h = {
     'S':7,
@@ -14,15 +13,35 @@ graph = {
     'G': {('B',4)},
 }
 
+def print_frontier(frontier):
+    frontier_temp = []
+    while len(frontier) != 0:
+        frontier_temp.append(frontier.pop())
+    frontier_str = ''
+    for fn, state in frontier_temp:
+        frontier_str += state[-1] + '(' + str(fn) + '-' + state[:-1] + ') '
+        frontier.append(state, fn)
+    print(frontier_str)
+
 def astar(graph, inital_node, goal_test, heuristics, is_tree, is_update):
-    tree = Tree()
-    priorityQueue = queue.PriorityQueue()
+    frontier = PriorityQueue('min')
+    frontier.append(inital_node, heuristics[inital_node])
+    visited = set()
+    while len(frontier) != 0:
+        print_frontier(frontier)
+        curr_fn, path = frontier.pop()
+        if goal_test(path[-1]):
+            return path
+        if not is_tree and path[-1] not in visited:
+            visited.add(path[-1])
 
-    raise NotImplementedError
+        for next_state, cost in graph[path[-1]]:
+            next_cost = curr_fn - heuristics[path[-1]] + cost + heuristics[next_state]
+            if not is_tree and next_state in visited:
+                continue
 
-    tree.save2file('astar.txt', line_type='ascii')
-
-    return ''.join(path)
+            frontier.append(path + next_state, next_cost)
+    return False
 
 # You might get a different trace due to popping different nodes.
 
